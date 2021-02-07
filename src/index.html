@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div>
+      <form>
+        <label for="textInput">Enter something</label>
+        <input type="text" id="textInput" />
+        <button id="submitButton">Submit</button>
+      </form>
+    </div>
+    <script>
+      const electron = require('electron');
+      const { ipcRenderer } = electron;
+      const input = document.getElementById('textInput');
+      const button = document.getElementById('submitButton');
+      button.addEventListener('click', addItem);
+      function addItem(e) {
+        e.preventDefault();
+        console.log(input.value);
+        ipcRenderer.send('Item:sender', input.value)
+      }
+    </script>
+  </body>
+</html>
