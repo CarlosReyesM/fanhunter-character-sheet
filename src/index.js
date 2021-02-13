@@ -1,5 +1,22 @@
 const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('path');
+const knex = require('knex')({
+  client: 'sqlite3',
+  connection: {
+    filename: '../FHDB.db',
+    debug: true
+  },
+});
+
+/*
+  this way we can set dynamically the database for dev or production 
+const knex = require('knex')({
+  client: 'sqlite3',
+  connection: () => ({
+    filename: process.env.SQLITE_FILENAME
+  })
+});
+ */
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -88,7 +105,7 @@ const createWindow = () => {
 
 const createNewWindow = () => {
   if (newWindow) {
-    return
+    return;
   }
   // Create the browser window.
   newWindow = new BrowserWindow({
@@ -140,8 +157,12 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
-app.on('browser-window-blur', () => {
-  console.log('oh yeah');
+app.on('browser-window-blur', async ()  => {
+  const firstUser = await knex
+    .select()
+    .table('users')
+    .catch(e => console.log(e));
+  console.log(firstUser);
 });
 
 ipcMain.on('Item:sender', (_e, item) => console.log(item));
