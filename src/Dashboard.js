@@ -1,37 +1,37 @@
 import React, { Component } from 'react';
-import send from './helper/renderer';
+import { connect } from 'react-redux';
+import { fetchPref, changeTheme } from './helper/slices/prefrenciasSlice';
 
 class Dashboard extends Component {
-  state = {
-    userName: '',
-  };
-
   componentDidMount() {
-    this.getUserName();
+    const { dispatch } = this.props;
+    dispatch(fetchPref());
   }
 
-  getUserName = async () => {
-    const users = await send('SELECT * FROM users WHERE id = 1').then(
-      (result) => result,
-    );
-    const [user] = users;
-    this.setState((s) => ({ ...s, userName: user.first_name }));
-    console.log(user);
-  };
-
-  sendPing = () => {
-    send('ping').then(console.log('pong'));
-  };
+  cambiarTema = (e) => {
+    e.preventDefault();
+    const { tema, dispatch } = this.props;
+    let newTheme;
+    if (tema === 'Oscuro') {
+      newTheme = 'Claro';
+    } else {
+      newTheme = 'Oscuro';
+    }
+    return dispatch(changeTheme(newTheme))
+  }
 
   render() {
-    const { userName } = this.state;
+    const { nombre, tema } = this.props;
     return (
-      <div>
-        {userName}
-        <button onClick={this.sendPing}>Send Ping</button>{' '}
-      </div>
+      <main>
+        {`Nombre: ${nombre}, Tema: ${tema}`}
+        <div>
+          <button onClick={this.cambiarTema} >Cambaiar Tema</button>
+        </div>
+      </main>
     );
   }
 }
 
-export default Dashboard;
+const mapStateToProps = (state) => state.getPref;
+export default connect(mapStateToProps)(Dashboard);
