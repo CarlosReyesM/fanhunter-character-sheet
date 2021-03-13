@@ -1,8 +1,8 @@
-import send from './renderer';
+const { api } = window;
 
 class backEnd {
   async getUserPref() {
-    const prefs = await send(
+    const prefs = await api.send(
       'SELECT * FROM PREFERENCIAS WHERE PREFERENCIAS_ID = 1;',
     )
       .then((result) => result)
